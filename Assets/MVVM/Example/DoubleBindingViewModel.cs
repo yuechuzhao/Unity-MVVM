@@ -1,14 +1,15 @@
-﻿using Client.Framework;
+﻿using System;
+using Client.Framework;
 using Client.Framework.Example;
 using JetBrains.Annotations;
 using UnityEngine;
 
 public class DoubleBindingViewModel : ViewModel {
-    public BindableProperty MaxValue  = new BindableProperty();
-    public BindableProperty CurrentValue = new BindableProperty();
-    public BindableProperty Progress = new BindableProperty();//当前进度比例，0~1
+    public BindableProperty MaxValue  = new BindableProperty(typeof(int));
+    public BindableProperty CurrentValue = new BindableProperty(typeof(int));
+    public BindableProperty Progress = new BindableProperty(typeof(float));//当前进度比例，0~1
 
-    public BindableProperty Data = new BindableProperty();
+    public BindableProperty Data = new BindableProperty(typeof(DoubleBindingModel));
 
 
     public override void InitProperties() {
@@ -27,20 +28,18 @@ public class DoubleBindingViewModel : ViewModel {
     /// </summary>
     /// <param name="oldProgress"></param>
     /// <param name="newProgress"></param>
-    public void OnChanged_Progress(object oldProgress, object newProgress) {
+    public void OnChanged_Progress(float oldProgress, float newProgress) {
         //Debuger.LogFormat("OnProgressChanged, old {0} new {1}", oldProgress, newProgress);
-        CurrentValue.Value = (int)(MaxValue.GetInt() * (float)newProgress);
+        CurrentValue.Value = (int)(MaxValue.GetInt() * newProgress);
     }
 
-    public void OnChanged_MaxValue(object oldMaxValue, object newMaxValue) {
+    public void OnChanged_MaxValue(float oldMaxValue, float newMaxValue) {
         //Debuger.LogFormat("OnMaxValueChanged, old {0} new {1}", oldMaxValue, newMaxValue);
-        CurrentValue.Value = (int)((int)newMaxValue * Progress.GetFloat());
+        CurrentValue.Value = (int)(newMaxValue * Progress.GetFloat());
     }
 
-    public void OnChanged_Data(object old, object current) {
-        DoubleBindingModel currentData = current as DoubleBindingModel;
-        Debug.Assert(current != null, "传递参数应为DoubleBindingModel");
-        currentData.Coins = (int)(currentData.MaxCoins * currentData.Progress); 
+    public void OnChanged_Data(DoubleBindingModel old, DoubleBindingModel current) {
+        current.Coins = (int)(current.MaxCoins * current.Progress); 
     }
 
     /// <summary>
@@ -75,7 +74,7 @@ public class DoubleBindingViewModel : ViewModel {
     /// 反射调用，相当于以前的OnEventTriggered。这里使用的
     /// </summary>
     /// <param name="param"></param>
-    private void OnCommand_ChangeProgress(float param) {
+    private void OnCommand_ChangeDataProgress(float param) {
         var model = Data.Value as DoubleBindingModel;
         model.Progress = param;
         Data.Reset(model);

@@ -30,36 +30,41 @@ namespace Client.Framework {
             return false;
         }
 
+
         /// <summary>
         /// 遍历所有bindProperties，做添加或者删除
         /// </summary>
         /// <param name="viewModelFields"></param>
         /// <param name="listenClassMethods"></param>
-        /// <param name="onDelegateFound"></param>
-        public static void DealBindPropertiesListener(FieldInfo[] viewModelFields, MethodInfo[] listenClassMethods,
-            System.Action<FieldInfo, EventInfo, Type, MethodInfo> onDelegateFound) {
-            // 找到泛型定义类
-            //Type binderDefType = typeof(BindableProperty<>);
-            Type delegateType = typeof(BindableProperty.ValueChangedHandler);
-            // 遍历所有的field，当field是BinderProperty<T>时，自动进行BinderProperty的委托操作
+        /// <param name="viewModel"></param>
+        /// <param name="onMethodFound"></param>
+        public static void DealBindPropertiesListener(FieldInfo[] viewModelFields,
+            MethodInfo[] listenClassMethods,
+            object viewModel,
+            System.Action<BindableProperty, MethodInfo> onMethodFound) {
+            // 遍历所有的field，当field是BinderProperty时，自动进行BinderProperty的委托操作
             for (int index = 0; index < viewModelFields.Length; index++) {
                 var field = viewModelFields[index];
                 System.Type fieldType = field.FieldType;
+                // 域必须是BindableProperty
+                if (fieldType != typeof(BindableProperty)) {
+                    continue;
+                }
 
-                // 检查本类当中有没有对应的OnXXXChanged方法
+                BindableProperty property = field.GetValue(viewModel) as BindableProperty ;
+                if (property == null) {
+                    continue;
+                }
+                // 检查本类当中有没有对应的OnXXXChanged(propertyType, propertyType)方法
                 MethodInfo listenerMethodInfo = null;
-                if (!TryGetListenerMethod(listenClassMethods, field.Name, typeof(object), out listenerMethodInfo)) {
+                if (!TryGetListenerMethod(listenClassMethods, field.Name, property.ValueType, out listenerMethodInfo)) {
                     continue;
                 }
 
                 // 得到onvaluechanged，确认其类型正是我们得到的这个代理
-                EventInfo onValueChanged = fieldType.GetEvent("OnValueChanged");
-                Type tDelegate = onValueChanged.EventHandlerType;
-                if (tDelegate != delegateType) continue;
-
-                if (onDelegateFound != null) {
+                if (onMethodFound != null) {
                     //// 添加到viewModel当中
-                    onDelegateFound(field, onValueChanged, tDelegate, listenerMethodInfo);
+                    onMethodFound(property, listenerMethodInfo);
                 }
                
             }

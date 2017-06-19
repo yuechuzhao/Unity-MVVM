@@ -56,23 +56,27 @@ namespace Client.Framework {
             }
             _view = view;
             _newViewModel = newViewModel;
-            MVVMUtility.DealBindPropertiesListener(_viewModelFields, _viewMethodInfos, OnDelegateFound);
+            MVVMUtility.DealBindPropertiesListener(_viewModelFields, _viewMethodInfos, oldViewModel, OnMethodFound);
             if (oldViewModel != null) {
                 oldViewModel.OnNotificationPush -= OnNotificationReceived;
             }
             _newViewModel.OnNotificationPush += OnNotificationReceived;
         }
 
-        private void OnDelegateFound(FieldInfo fieldInfo, EventInfo eventInfo, Type delegateType, MethodInfo method) {
-            Delegate onChangeListener = Delegate.CreateDelegate(delegateType, _view, method);
-
+        private void OnMethodFound(BindableProperty bindProperty, MethodInfo methodInfo) {
             if (_oldViewModel != null) {
-                // 从旧的viewModel当中移除，添加到新的viewModel当中
-                eventInfo.RemoveEventHandler(fieldInfo.GetValue(_oldViewModel), onChangeListener);    
+                bindProperty.RemoveValueChangedHandler(new MethodCaller() {
+                    Caller = _oldViewModel,
+                    Method = methodInfo
+                });
             }
-            eventInfo.AddEventHandler(fieldInfo.GetValue(_newViewModel), onChangeListener);
-            _oldViewModel = _newViewModel;
+
+            bindProperty.AddValueChangedHandler(new MethodCaller() {
+               Caller = _newViewModel,
+               Method = methodInfo
+            });
         }
+
 
         private void OnNotificationReceived(string notification, object paramObject) {
             System.Type paramType = paramObject == null ? null : paramObject.GetType();

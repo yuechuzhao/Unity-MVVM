@@ -6,11 +6,11 @@ public interface IView {
 }
 
 public class UnityGuiView : MonoBehaviour, IView {
-    public readonly BindableProperty ViewModelProperty = new BindableProperty();
+    public readonly BindableProperty ViewModelProperty = new BindableProperty(typeof(ViewModel));
     public ViewModel BindingContext {
         get {
             ViewModel value = ViewModelProperty.Value as ViewModel;
-            if (value == null) {
+            if (ViewModelProperty.Value != null && value == null) {
                 Debug.LogErrorFormat("设值错误，ViewModelProperty容器内不是ViewModel");
             }
             return (value);

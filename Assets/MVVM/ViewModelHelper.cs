@@ -22,12 +22,14 @@ namespace Client.Framework {
                 return;
             }
             _viewModel = viewModel;
-            MVVMUtility.DealBindPropertiesListener(_fields, _methodInfos, OnDelegateFound);
+            MVVMUtility.DealBindPropertiesListener(_fields, _methodInfos, _viewModel, OnMethodFound);
         }
 
-        private void OnDelegateFound(FieldInfo fieldInfo, EventInfo eventInfo, Type delegateType, MethodInfo method) {
-            Delegate onChangeListener = Delegate.CreateDelegate(delegateType, _viewModel, method);
-            eventInfo.AddEventHandler(fieldInfo.GetValue(_viewModel), onChangeListener);
+        private void OnMethodFound(BindableProperty bindProperty, MethodInfo method) {
+            bindProperty.AddValueChangedHandler(new MethodCaller() {
+                Caller = _viewModel,
+                Method = method
+            });
         }
 
 

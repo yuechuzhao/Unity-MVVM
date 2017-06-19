@@ -13,14 +13,14 @@ public class DoubleBindingLauncher : MonoBehaviour {
         var viewModel = new DoubleBindingViewModel();
         setupClassView.BindingContext = viewModel;
         if (UsingClassData) {
+            setupClassView.BindingContext = viewModel;
             setupView.gameObject.SetActive(false);
             setupClassView.gameObject.SetActive(true);
-            setupClassView.BindingContext = viewModel;
         }
         else {
+            setupView.BindingContext = viewModel;
             setupView.gameObject.SetActive(true);
             setupClassView.gameObject.SetActive(false);
-            setupView.BindingContext = viewModel;
         }
     }
 }

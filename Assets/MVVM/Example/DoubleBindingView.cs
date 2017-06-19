@@ -23,6 +23,9 @@ public class DoubleBindingView : UnityGuiView {
 
 
     private void OnSliderChanged(float progress) {
+        if (BindingContext == null) {
+            return;
+        }
         //Debuger.LogFormat("progress is {0} ", progress);
         BindingContext.SetProperty("Progress", progress);
     }
@@ -38,13 +41,23 @@ public class DoubleBindingView : UnityGuiView {
     }
 
     /// <summary>
+    /// 反射调用的方法，意味着当ViewModel当中的CurrentValue属性发生变化时，本地视图上相应的元素也要发生变化
+    /// </summary>
+    /// <param name="oldValue"></param>
+    /// <param name="newValue"></param>
+    private void OnChanged_CurrentValue(int oldValue, int newValue) {
+        //Debuger.LogFormat("OnCurrentValueChanged, {0}, {1}", oldValue, newValue);
+        CurrentCoins.text = string.Format("贡献金币:{0}", newValue);
+    }
+
+    /// <summary>
     /// 反射调用的方法，意味着当ViewModel当中的Progress属性发生变化时，本地视图上相应的元素也要发生变化
     /// </summary>
     /// <param name="oldValue"></param>
     /// <param name="newValue"></param>
-    private void OnChanged_Progress(object oldValue, object newValue) {
-        Debug.LogFormat("OnProgressChanged, {0}, {1}", oldValue.ToString(), newValue.ToString());
-        Progress.value = (float)newValue;
+    private void OnChanged_Progress(float oldValue, float newValue) {
+        Debug.LogFormat("OnProgressChanged, {0}, {1}", oldValue, newValue);
+        Progress.value = newValue;
     }
 
     /// <summary>
@@ -52,8 +65,8 @@ public class DoubleBindingView : UnityGuiView {
     /// </summary>
     /// <param name="oldValue"></param>
     /// <param name="newValue"></param>
-    private void OnChanged_MaxValue(object oldValue, object newValue) {
+    private void OnChanged_MaxValue(int oldValue, int newValue) {
         //Debuger.LogFormat("OnMaxValueChanged, {0}, {1}", oldValue, newValue);
-        MaxCoins.text = string.Format("总金币:{0}", newValue.ToString());
+        MaxCoins.text = string.Format("总金币:{0}", newValue);
     }
 }
