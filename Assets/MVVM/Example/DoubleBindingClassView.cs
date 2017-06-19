@@ -39,6 +39,10 @@ public class DoubleBindingClassView : UnityGuiView {
         MaxCoins.text = string.Format("总金币:{0}", newValue.MaxCoins);
     }
 
+    /// <summary>
+    /// 反射调用。当viewModel当中的SendNotifaction("Success", param)被调用时被触发
+    /// </summary>
+    /// <param name="param"></param>
     private void OnNotification_SubmitSuccess(object param) {
         Debug.LogFormat("提交成功！{0}", Time.frameCount);
     }

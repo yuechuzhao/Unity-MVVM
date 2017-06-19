@@ -24,7 +24,7 @@ public class DoubleBindingViewModel : ViewModel {
     }
 
     /// <summary>
-    /// 由反射调用，相当于以前的OnPropertyChanged
+    /// 由反射调用。当viewModel中的xxx属性发生变化时，自动被触发
     /// </summary>
     /// <param name="oldProgress"></param>
     /// <param name="newProgress"></param>
@@ -43,7 +43,7 @@ public class DoubleBindingViewModel : ViewModel {
     }
 
     /// <summary>
-    /// 反射调用，相当于以前的OnEventTriggered
+    /// 反射调用。当view当中的SendCommand_xxx方法被调用时，触发本方法
     /// </summary>
     /// <param name="param"></param>
     private void OnCommand_Submit(object param) {
@@ -55,7 +55,7 @@ public class DoubleBindingViewModel : ViewModel {
     }
 
     /// <summary>
-    /// 反射调用，相当于以前的OnEventTriggered。这里使用的
+    /// 反射调用。当view当中的SendCommand_xxx方法被调用时，触发本方法
     /// </summary>
     /// <param name="param"></param>
     private void OnCommand_SubmitData(object param) {
@@ -71,7 +71,7 @@ public class DoubleBindingViewModel : ViewModel {
 
 
     /// <summary>
-    /// 反射调用，相当于以前的OnEventTriggered。这里使用的
+    /// 反射调用。当view当中的SendCommand_xxx方法被调用时，触发本方法
     /// </summary>
     /// <param name="param"></param>
     private void OnCommand_ChangeDataProgress(float param) {

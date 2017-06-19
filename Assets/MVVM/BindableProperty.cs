@@ -4,8 +4,9 @@ using System.Reflection;
 using UnityEngine;
 
 namespace Client.Framework {
+
     /// <summary>
-    /// 数据绑定，原本为泛型类，为了xlua等调用修改为使用object
+    /// 仿造的委托处理器，记录methodInfo以及caller，在需要调用时进行invoke
     /// </summary>
     public struct MethodCaller : IEquatable<MethodCaller> {
         public MethodInfo Method;
@@ -34,6 +35,9 @@ namespace Client.Framework {
         }
     }
 
+    /// <summary>
+    /// 数据绑定，原本为泛型类，为了xlua等调用修改为使用object
+    /// </summary>
     public class BindableProperty {
         public delegate void ValueChangedHandler (object oldValue, object newValue);
 
