@@ -21,15 +21,6 @@ public class DoubleBindingView : UnityGuiView {
         BindingContext.ReceiveCommand("Submit", null);
     }
 
-    private void OnMaxSettingChanged(string maxValueStr) {
-        float value;
-        if (!float.TryParse(maxValueStr, out value)) {
-            value = 0;
-        }
-        //设置属性方法，当输入新的maxValue时，viewModel中的MaxValue也随之变化
-        //Debuger.LogFormat("maxValue is {0}", value);
-        BindingContext.SetProperty("MaxValue", value);
-    }
 
     private void OnSliderChanged(float progress) {
         //Debuger.LogFormat("progress is {0} ", progress);
@@ -41,9 +32,9 @@ public class DoubleBindingView : UnityGuiView {
     /// </summary>
     /// <param name="oldValue"></param>
     /// <param name="newValue"></param>
-    private void OnChanged_CurrentValue(int oldValue, int newValue) {
+    private void OnChanged_CurrentValue(object oldValue, object newValue ) {
         //Debuger.LogFormat("OnCurrentValueChanged, {0}, {1}", oldValue, newValue);
-        CurrentCoins.text = string.Format("贡献金币:{0}", newValue);
+        CurrentCoins.text = string.Format("贡献金币:{0}", newValue.ToString());
     }
 
     /// <summary>
@@ -51,9 +42,9 @@ public class DoubleBindingView : UnityGuiView {
     /// </summary>
     /// <param name="oldValue"></param>
     /// <param name="newValue"></param>
-    private void OnChanged_Progress(float oldValue, float newValue) {
-        Debug.LogFormat("OnProgressChanged, {0}, {1}", oldValue, newValue);
-        Progress.value = newValue;
+    private void OnChanged_Progress(object oldValue, object newValue) {
+        Debug.LogFormat("OnProgressChanged, {0}, {1}", oldValue.ToString(), newValue.ToString());
+        Progress.value = (float)newValue;
     }
 
     /// <summary>
@@ -61,8 +52,8 @@ public class DoubleBindingView : UnityGuiView {
     /// </summary>
     /// <param name="oldValue"></param>
     /// <param name="newValue"></param>
-    private void OnChanged_MaxValue(int oldValue, int newValue) {
+    private void OnChanged_MaxValue(object oldValue, object newValue) {
         //Debuger.LogFormat("OnMaxValueChanged, {0}, {1}", oldValue, newValue);
-        MaxCoins.text = string.Format("总金币:{0}", newValue);
+        MaxCoins.text = string.Format("总金币:{0}", newValue.ToString());
     }
 }

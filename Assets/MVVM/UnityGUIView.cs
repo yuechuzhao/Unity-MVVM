@@ -6,9 +6,15 @@ public interface IView {
 }
 
 public class UnityGuiView : MonoBehaviour, IView {
-    public readonly BindableProperty<ViewModel> ViewModelProperty = new BindableProperty<ViewModel>();
+    public readonly BindableProperty ViewModelProperty = new BindableProperty();
     public ViewModel BindingContext {
-        get { return ViewModelProperty.Value; }
+        get {
+            ViewModel value = ViewModelProperty.Value as ViewModel;
+            if (value == null) {
+                Debug.LogErrorFormat("设值错误，ViewModelProperty容器内不是ViewModel");
+            }
+            return (value);
+        }
         set {
             // 有顺序，必须先setType，不然会报空异常
             if (value == null) {
@@ -23,7 +29,9 @@ public class UnityGuiView : MonoBehaviour, IView {
 
     private readonly UnityGuiViewHelper _unityGuiViewHelper = new UnityGuiViewHelper();
 
-    private void OnBindingContextChanged (ViewModel oldViewModel, ViewModel newViewModel) {
+    private void OnBindingContextChanged (object oldViewModelObj, object newViewModelObj) {
+        ViewModel oldViewModel = oldViewModelObj as ViewModel;
+        ViewModel newViewModel = newViewModelObj as ViewModel;
         _unityGuiViewHelper.ReattatchViewListener(this, oldViewModel, newViewModel);
     }
 

@@ -32,7 +32,8 @@ public class DoubleBindingClassView : UnityGuiView {
     /// </summary>
     /// <param name="oldValue"></param>
     /// <param name="newValue"></param>
-    private void OnChanged_Data(DoubleBindingModel oldValue, DoubleBindingModel newValue) {
+    private void OnChanged_Data(object oldValue, object newValueObj) {
+        var newValue = newValueObj as DoubleBindingModel;
         //Debuger.LogFormat("OnCurrentValueChanged, {0}, {1}", oldValue, newValue);
         CurrentCoins.text = string.Format("贡献金币:{0}", newValue.Coins);
         Progress.value = newValue.Progress;

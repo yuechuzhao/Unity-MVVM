@@ -39,27 +39,23 @@ namespace Client.Framework {
         public static void DealBindPropertiesListener(FieldInfo[] viewModelFields, MethodInfo[] listenClassMethods,
             System.Action<FieldInfo, EventInfo, Type, MethodInfo> onDelegateFound) {
             // 找到泛型定义类
-            Type binderDefType = typeof(BindableProperty<>);
-            Type delegateDefType = typeof(BindableProperty<>.ValueChangedHandler);
+            //Type binderDefType = typeof(BindableProperty<>);
+            Type delegateType = typeof(BindableProperty.ValueChangedHandler);
             // 遍历所有的field，当field是BinderProperty<T>时，自动进行BinderProperty的委托操作
             for (int index = 0; index < viewModelFields.Length; index++) {
                 var field = viewModelFields[index];
                 System.Type fieldType = field.FieldType;
-                // 确认是不是bindableProperty<T>
-                if (fieldType.GetGenericTypeDefinition() != binderDefType) continue;
-                Type genericParamType = fieldType.GetGenericArguments()[0];//如int,float之类的
 
                 // 检查本类当中有没有对应的OnXXXChanged方法
                 MethodInfo listenerMethodInfo = null;
-                if (!TryGetListenerMethod(listenClassMethods, field.Name, genericParamType, out listenerMethodInfo)) {
+                if (!TryGetListenerMethod(listenClassMethods, field.Name, typeof(object), out listenerMethodInfo)) {
                     continue;
                 }
 
-                Type changeHandlerDeleType = delegateDefType.MakeGenericType(genericParamType);//创建onValueChange代理的实际类型
-                // 得到onvaluechanged，确认其类型正是我们得到的这个泛型代理
+                // 得到onvaluechanged，确认其类型正是我们得到的这个代理
                 EventInfo onValueChanged = fieldType.GetEvent("OnValueChanged");
                 Type tDelegate = onValueChanged.EventHandlerType;
-                if (tDelegate != changeHandlerDeleType) continue;
+                if (tDelegate != delegateType) continue;
 
                 if (onDelegateFound != null) {
                     //// 添加到viewModel当中
