@@ -13,9 +13,9 @@ public class DoubleBindingViewModel : ViewModel {
 
 
     public override void InitProperties() {
-        MaxValue.Reset(1000);
+        MaxValue.Reset(10000);
         Progress.Reset(0.1f);
-        CurrentValue.Reset(100);
+        CurrentValue.Reset(1000);
         Data.Reset(new DoubleBindingModel() {
             Coins = 1000,
             MaxCoins = 10000,
@@ -29,7 +29,7 @@ public class DoubleBindingViewModel : ViewModel {
     /// <param name="oldProgress"></param>
     /// <param name="newProgress"></param>
     public void OnChanged_Progress(float oldProgress, float newProgress) {
-        //Debuger.LogFormat("OnProgressChanged, old {0} new {1}", oldProgress, newProgress);
+        //Debug.LogFormat("OnProgressChanged, old {0} new {1}", oldProgress, newProgress);
         CurrentValue.Value = (int)(MaxValue.GetInt() * newProgress);
     }
 

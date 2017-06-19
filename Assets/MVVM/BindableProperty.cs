@@ -37,9 +37,10 @@ namespace Client.Framework {
     public class BindableProperty {
         public delegate void ValueChangedHandler (object oldValue, object newValue);
 
+        /// <summary>
+        /// 可直接挂载委托，但并不推荐使用。仅在UnityGuiView当中使用过一次
+        /// </summary>
         public event ValueChangedHandler OnValueChanged;
-
-
         
         private List<MethodCaller> _invokeMethods = new List<MethodCaller>();
 
@@ -69,20 +70,30 @@ namespace Client.Framework {
             }
         }
 
+        /// <summary>
+        /// 值类型，当前值的类型。用来做赋值有效性判断
+        /// </summary>
         private readonly Type _valueType;
         public Type ValueType {
             get { return _valueType; }
         }
 
-
         
-        public void AddValueChangedHandler(MethodCaller method) {
+        /// <summary>
+        /// 添加listener
+        /// </summary>
+        /// <param name="method"></param>
+        public void AddValueChangedListener(MethodCaller method) {
             if (!_invokeMethods.Contains(method)) {
                 _invokeMethods.Add(method);
             }
         }
 
-        public void RemoveValueChangedHandler(MethodCaller method) {
+        /// <summary>
+        /// 移除listener
+        /// </summary>
+        /// <param name="method"></param>
+        public void RemoveValueChangedListener(MethodCaller method) {
             if (_invokeMethods.Contains(method)) {
                 _invokeMethods.Remove(method);
             }
@@ -120,12 +131,15 @@ namespace Client.Framework {
  
  
         private void ValueChanged (object oldValue, object newValue) {
-            //if (OnValueChanged != null) {
-            //    OnValueChanged(oldValue, newValue);
-            //}
+            if (OnValueChanged != null) {
+                OnValueChanged(oldValue, newValue);
+            }
             for (int mIndex = 0; mIndex < _invokeMethods.Count; mIndex++) {
-                var methodInfo = _invokeMethods[mIndex];
-                methodInfo.Invoke(oldValue, newValue);
+                var methodCaller = _invokeMethods[mIndex];
+                //Debug.LogFormat("ValueChanged, {0},  caller {1}", 
+                //    methodCaller.Method.Name, methodCaller.Caller.GetType().Name);
+
+                methodCaller.Invoke(oldValue, newValue);
             }
         }
 

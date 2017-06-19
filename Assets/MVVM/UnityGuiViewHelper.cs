@@ -56,23 +56,24 @@ namespace Client.Framework {
             }
             _view = view;
             _newViewModel = newViewModel;
-            MVVMUtility.DealBindPropertiesListener(_viewModelFields, _viewMethodInfos, oldViewModel, OnMethodFound);
             if (oldViewModel != null) {
+                MVVMUtility.DealBindPropertiesListener(_viewModelFields, _viewMethodInfos, oldViewModel, OnOldViewModelMethodFound);
                 oldViewModel.OnNotificationPush -= OnNotificationReceived;
             }
+            MVVMUtility.DealBindPropertiesListener(_viewModelFields, _viewMethodInfos, _newViewModel, OnNewViewModelMethodFound);
             _newViewModel.OnNotificationPush += OnNotificationReceived;
         }
 
-        private void OnMethodFound(BindableProperty bindProperty, MethodInfo methodInfo) {
-            if (_oldViewModel != null) {
-                bindProperty.RemoveValueChangedHandler(new MethodCaller() {
-                    Caller = _oldViewModel,
-                    Method = methodInfo
-                });
-            }
+        private void OnOldViewModelMethodFound(BindableProperty bindProperty, MethodInfo methodInfo) {
+            bindProperty.RemoveValueChangedListener(new MethodCaller() {
+                Caller = _view,
+                Method = methodInfo 
+            });
+        }
 
-            bindProperty.AddValueChangedHandler(new MethodCaller() {
-               Caller = _newViewModel,
+        private void OnNewViewModelMethodFound(BindableProperty bindProperty, MethodInfo methodInfo) {
+            bindProperty.AddValueChangedListener(new MethodCaller() {
+               Caller = _view,
                Method = methodInfo
             });
         }

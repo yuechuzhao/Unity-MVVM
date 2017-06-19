@@ -26,7 +26,7 @@ namespace Client.Framework {
         }
 
         private void OnMethodFound(BindableProperty bindProperty, MethodInfo method) {
-            bindProperty.AddValueChangedHandler(new MethodCaller() {
+            bindProperty.AddValueChangedListener(new MethodCaller() {
                 Caller = _viewModel,
                 Method = method
             });

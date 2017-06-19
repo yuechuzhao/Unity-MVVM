@@ -56,7 +56,7 @@ public class DoubleBindingView : UnityGuiView {
     /// <param name="oldValue"></param>
     /// <param name="newValue"></param>
     private void OnChanged_Progress(float oldValue, float newValue) {
-        Debug.LogFormat("OnProgressChanged, {0}, {1}", oldValue, newValue);
+        //Debug.LogFormat("OnProgressChanged, {0}, {1}", oldValue, newValue);
         Progress.value = newValue;
     }
 
